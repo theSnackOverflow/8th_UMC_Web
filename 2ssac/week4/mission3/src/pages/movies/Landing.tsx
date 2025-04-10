@@ -8,7 +8,7 @@ const Landing = () => {
         지금 인기 영화부터, 개봉 예정작까지 모두 확인해보세요!
       </p>
       <Link
-        to="/login"
+        to="/movies/popular"
         className="px-6 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition"
       >
         인기 영화 보러가기 →

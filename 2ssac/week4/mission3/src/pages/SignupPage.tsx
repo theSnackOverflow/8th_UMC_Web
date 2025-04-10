@@ -101,8 +101,8 @@ const SignupPage = () => {
               {...register("password", {
                 required: "비밀번호를 입력해주세요.",
                 minLength: {
-                  value: 6,
-                  message: "비밀번호는 최소 6자 이상이어야 해요.",
+                  value: 8,
+                  message: "비밀번호는 최소 8자 이상이어야 해요.",
                 },
               })}
               type={showPassword ? "text" : "password"}
@@ -169,8 +169,15 @@ const SignupPage = () => {
           })}
           className="space-y-4"
         >
+          {/* 👤 프로필 아이콘 UI */}
+          <div className="flex justify-center">
+            <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center">
+              <span className="text-3xl text-gray-600">👤</span>
+            </div>
+          </div>
+
           {/* 이메일 다시 보여주기 */}
-          <div className="text-sm text-gray-400">
+          <div className="text-sm text-gray-400 text-center">
             가입 이메일: <span className="text-white">{savedEmail}</span>
           </div>
 
