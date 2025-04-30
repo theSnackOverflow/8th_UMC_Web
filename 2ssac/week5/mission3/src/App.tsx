@@ -13,7 +13,7 @@ import MovieDetail from "./pages/movies/MovieDetial";
 
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
-import OAuthCallback from "./pages/OAuthCallback";
+import GoogleCallbackHandler from "./pages/GoogleCallbackHandler"; // 경로에 따라 조정
 
 const App = () => {
   return (
@@ -38,7 +38,7 @@ const App = () => {
             {/* 인증 불필요 */}
             <Route path="login" element={<LoginPage />} />
             <Route path="signup" element={<SignupPage />} />
-            <Route path="/oauth/callback" element={<OAuthCallback />} />
+            <Route path="/v1/auth/google/callback" element={<GoogleCallbackHandler />} />
           </Route>
         </Routes>
       </BrowserRouter>
