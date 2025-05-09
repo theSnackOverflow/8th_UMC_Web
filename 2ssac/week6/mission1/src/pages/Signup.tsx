@@ -8,6 +8,8 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    bio: "",
+    avatar: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,15 +28,15 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black text-white">
-      <h2 className="text-2xl font-bold mb-4">회원가입</h2>
+    <div className="flex flex-col items-center justify-center h-screen text-white bg-black">
+      <h2 className="mb-4 text-2xl font-bold">회원가입</h2>
       <input
         type="text"
         name="name"
         placeholder="이름"
         value={form.name}
         onChange={handleChange}
-        className="mb-2 px-4 py-2 border rounded text-black"
+        className="px-4 py-2 mb-2 text-black border rounded"
       />
       <input
         type="email"
@@ -42,7 +44,7 @@ const Signup = () => {
         placeholder="이메일"
         value={form.email}
         onChange={handleChange}
-        className="mb-2 px-4 py-2 border rounded text-black"
+        className="px-4 py-2 mb-2 text-black border rounded"
       />
       <input
         type="password"
@@ -50,11 +52,27 @@ const Signup = () => {
         placeholder="비밀번호"
         value={form.password}
         onChange={handleChange}
-        className="mb-4 px-4 py-2 border rounded text-black"
+        className="px-4 py-2 mb-2 text-black border rounded"
+      />
+      <input
+        type="text"
+        name="bio"
+        placeholder="소개 (선택)"
+        value={form.bio}
+        onChange={handleChange}
+        className="px-4 py-2 mb-2 text-black border rounded"
+      />
+      <input
+        type="text"
+        name="avatar"
+        placeholder="아바타 URL (선택)"
+        value={form.avatar}
+        onChange={handleChange}
+        className="px-4 py-2 mb-4 text-black border rounded"
       />
       <button
         onClick={handleSignup}
-        className="bg-pink-500 hover:bg-pink-600 px-6 py-2 rounded text-white"
+        className="px-6 py-2 text-white bg-pink-500 rounded hover:bg-pink-600"
       >
         회원가입
       </button>
