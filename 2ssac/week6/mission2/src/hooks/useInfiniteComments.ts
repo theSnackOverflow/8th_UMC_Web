@@ -30,7 +30,7 @@ export const useInfiniteComments = (
     Error,
     CommentResponse,
     [_1: string, _2: string | number, _3: "asc" | "desc"],
-    number
+    number | null
   >({
     queryKey: ["comments", lpId, order],
     initialPageParam: 0,
@@ -41,9 +41,12 @@ export const useInfiniteComments = (
           params: {
             cursor: pageParam,
             order,
+            limit: 5,
           },
         }
       );
+
+      console.log("응답 데이터", res.data.data); // 댓글 무한 스크롤 - 콘솔 응답 확인
       return res.data.data;
     },
     getNextPageParam: (lastPage) => lastPage.nextCursor,

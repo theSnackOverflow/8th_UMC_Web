@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useLPDetail } from "../hooks/useLPDetail";
-import Comment from "../components/Comment";
+import CommentList from "../components/comments/CommentList";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
@@ -72,7 +72,7 @@ const LPDetail = () => {
         </div>
 
         {/* 댓글 */}
-        <Comment />
+        <CommentList />
 
       </div>
     </div>
