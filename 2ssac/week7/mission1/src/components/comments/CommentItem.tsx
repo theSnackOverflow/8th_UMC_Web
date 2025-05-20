@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useUpdateComment } from "../../hooks/comments/useUpdateComment";
 import { useDeleteComment } from "../../hooks/comments/useDeleteComment";
 import { MoreHorizontal } from "lucide-react";
+import { useMyInfo } from "../../hooks/auth/useMyInfo";
 
 interface Props {
   comment: Comment;
@@ -17,6 +18,7 @@ const CommentItem = ({ comment }: Props) => {
   const [editedContent, setEditedContent] = useState(comment.content);
   const updateComment = useUpdateComment(Number(lpId), comment.id);
   const deleteComment = useDeleteComment(Number(lpId), comment.id);
+  const { data: me } = useMyInfo();
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,7 +46,7 @@ const CommentItem = ({ comment }: Props) => {
     }
   };
 
-  const isMyComment = comment.author.name === "강지훈"; // 실제 로그인 사용자 확인 로직으로 교체 필요
+  const isMyComment = me?.id === comment.author.id;
 
   return (
     <div className="relative px-4 py-3 text-sm rounded-lg bg-zinc-800">
