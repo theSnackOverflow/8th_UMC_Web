@@ -39,7 +39,9 @@ axiosInstance.interceptors.response.use(
 
         // 저장 및 헤더 갱신
         localStorage.setItem("accessToken", newAccessToken);
-        axiosInstance.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+        axiosInstance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${newAccessToken}`;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return axiosInstance(originalRequest); // 실패했던 요청 재시도
