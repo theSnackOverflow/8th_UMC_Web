@@ -1,19 +1,27 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMyInfo } from "../hooks/auth/useMyInfo";
 import { useUploadImage } from "../hooks/uploads/useUploadImage";
 import { useUpdateProfile } from "../hooks/auth/useUpdateProfile";
 
 const MyPage = () => {
-  const { data: me } = useMyInfo();
+  const { data: me, isLoading } = useMyInfo();
   const uploadImage = useUploadImage();
   const updateProfile = useUpdateProfile();
 
-  const [name, setName] = useState(me?.name ?? "");
-  const [bio, setBio] = useState(me?.bio ?? "");
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState(me?.avatar ?? "");
+  const [avatarPreview, setAvatarPreview] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (me) {
+      setName(me.name ?? "");
+      setBio(me.bio ?? "");
+      setAvatarPreview(me.avatar ?? "");
+    }
+  }, [me]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -31,14 +39,27 @@ const MyPage = () => {
       avatarUrl = await uploadImage.mutateAsync(avatar);
     }
 
-    updateProfile.mutate({
-      name: name.trim(),
-      bio: bio.trim(),
-      avatar: avatarUrl,
-    });
+    updateProfile.mutate(
+      {
+        name: name.trim(),
+        bio: bio.trim(),
+        avatar: avatarUrl,
+      },
+      {
+        onSuccess: () => {
+          alert("프로필이 성공적으로 수정되었습니다!");
+        },
+      }
+    );
   };
 
-  if (!me) return null;
+  if (isLoading || !me) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-white">
+        불러오는 중...
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-zinc-900">
@@ -50,7 +71,7 @@ const MyPage = () => {
             className="relative overflow-hidden border-2 rounded-full cursor-pointer w-28 h-28 border-zinc-600 hover:opacity-80"
           >
             <img
-              src={avatarPreview || "/avartar.png" }
+              src={avatarPreview || "/avatar.png"}
               alt="프로필 사진"
               className="object-cover w-full h-full"
             />
@@ -62,7 +83,7 @@ const MyPage = () => {
               hidden
             />
           </div>
-          <p className="text-sm text-gray-400">클릭하여 사진 변경</p>
+          <p className="text-sm text-gray-400">{me.email}</p>
         </div>
 
         {/* 폼 */}
@@ -94,9 +115,10 @@ const MyPage = () => {
         {/* 저장 버튼 */}
         <button
           onClick={handleSubmit}
-          className="w-full px-4 py-2 text-white bg-pink-500 rounded hover:bg-pink-600"
+          disabled={uploadImage.isPending}
+          className="w-full px-4 py-2 text-white bg-pink-500 rounded hover:bg-pink-600 disabled:opacity-50"
         >
-          저장
+          {uploadImage.isPending ? "업로드 중..." : "저장"}
         </button>
       </div>
     </div>

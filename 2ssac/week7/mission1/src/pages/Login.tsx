@@ -1,27 +1,34 @@
 import { useState } from "react";
-import { login as loginApi } from "../services/auth";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useLogin } from "..//hooks/auth/useLogin";
 
 const Login = () => {
-  const { login } = useAuth(); // context의 login 함수
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const loginMutation = useLogin();
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    try {
-      const { accessToken, refreshToken } = await loginApi(email, password);
-      login(accessToken, refreshToken); // 토큰 저장
-      navigate("/"); // 홈으로 이동 (또는 이전 경로)
-    } catch (err) {
-      setError("로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
-    }
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: ({ accessToken, refreshToken }) => {
+          login(accessToken, refreshToken);
+          navigate("/");
+        },
+        onError: () => {
+          setError("로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
+        },
+      }
+    );
   };
 
   return (
@@ -51,9 +58,10 @@ const Login = () => {
 
         <button
           type="submit"
-          className="w-full py-2 text-white transition bg-pink-500 rounded hover:bg-pink-600"
+          disabled={loginMutation.isPending}
+          className="w-full py-2 text-white transition bg-pink-500 rounded hover:bg-pink-600 disabled:opacity-50"
         >
-          로그인
+          {loginMutation.isPending ? "로그인 중..." : "로그인"}
         </button>
       </form>
     </div>

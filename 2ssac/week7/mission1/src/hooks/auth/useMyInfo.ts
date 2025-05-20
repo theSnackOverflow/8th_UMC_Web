@@ -6,7 +6,7 @@ export const useMyInfo = () => {
     queryKey: ["myInfo"],
     queryFn: async () => {
       const res = await axiosInstance.get("/v1/users/me");
-      return res.data;
+      return res.data.data;
     },
   });
 };

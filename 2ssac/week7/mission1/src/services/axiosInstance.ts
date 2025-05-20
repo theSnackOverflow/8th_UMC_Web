@@ -2,13 +2,12 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // 쿠키 필요 시 사용
 });
 
 // 요청 인터셉터: accessToken 추가
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-  if (token && config.headers) {
+  if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

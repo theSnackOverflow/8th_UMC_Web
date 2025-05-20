@@ -10,7 +10,7 @@ export const useUpdateProfile = () => {
       bio?: string;
       avatar?: string;
     }) => {
-      const response = await axiosInstance.patch("/v1/users/me", data);
+      const response = await axiosInstance.patch("/v1/users", data);
       return response.data;
     },
     onSuccess: () => {

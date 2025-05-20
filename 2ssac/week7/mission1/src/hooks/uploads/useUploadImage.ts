@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "../../services/axiosInstance";
+import axiosPublicInstance from "../../services/axiosPublicInstance";
 
 export const useUploadImage = () => {
   return useMutation({
@@ -7,11 +7,17 @@ export const useUploadImage = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await axiosInstance.post("/v1/uploads", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await axiosPublicInstance.post(
+        "/v1/uploads/public",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      return res.data.data.imageUrl as string;
+      return res.data.data.imageUrl;
     },
   });
 };
