@@ -1,9 +1,9 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
-  useEffect,
 } from "react";
 import { fetchUserInfo } from "../services/auth";
 
@@ -25,8 +25,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("accessToken"));
-  const [refreshToken, setRefreshToken] = useState(() =>
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("accessToken")
+  );
+  const [refreshToken, setRefreshToken] = useState<string | null>(() =>
     localStorage.getItem("refreshToken")
   );
   const [user, setUser] = useState<User | null>(null);
@@ -46,41 +48,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
-  const isAuthenticated = !!token;
-
   useEffect(() => {
     const loadUser = async () => {
-      if (token) {
-        try {
-          const userInfo = await fetchUserInfo();
-          setUser(userInfo);
-        } catch (err) {
-          console.error("사용자 정보를 불러오지 못했습니다.", err);
-          logout(); // 토큰이 유효하지 않다면 로그아웃 처리
-        }
+      if (!token) return;
+      try {
+        const userInfo: User = await fetchUserInfo();
+        setUser(userInfo);
+      } catch (err) {
+        console.error("사용자 정보를 불러오지 못했습니다.", err);
+        logout();
       }
     };
     loadUser();
   }, [token]);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        token,
-        refreshToken,
-        user,
-        login,
-        logout,
-        isAuthenticated,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const value: AuthContextType = {
+    token,
+    refreshToken,
+    user,
+    login,
+    logout,
+    isAuthenticated: !!token,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
   return context;
 };
