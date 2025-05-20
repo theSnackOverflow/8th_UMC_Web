@@ -1,52 +1,65 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useLPDetail } from "../hooks/lps/useLPDetail";
 import CommentList from "../components/comments/CommentList";
 import EditLPModal from "../components/modals/EditLPModal";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLikeLP } from "../hooks/lps/useLikeLP";
+import { useDeleteLP } from "../hooks/lps/useDeleteLP";
 
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko";
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
 
 const LPDetail = () => {
   const { lpId } = useParams<{ lpId: string }>();
   const safeLpId = Number(lpId || 0);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const { data: lp, isLoading, error, refetch } = useLPDetail(lpId || "");
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const { user } = useAuth();
   const { addLike, removeLike } = useLikeLP(safeLpId);
+  const deleteLP = useDeleteLP(safeLpId);
 
+  // 로딩 또는 에러 처리 먼저
   if (isLoading) return <div className="p-6 text-white">로딩 중...</div>;
   if (error || !lp) return <div className="p-6 text-white">데이터를 불러오지 못했습니다.</div>;
 
+  // 안전하게 lp 사용 가능
   const isMine = user?.id === lp.author.id;
   const isLiked = lp.likes.some((like) => like.userId === user?.id);
-  
 
   const handleToggleLike = () => {
     if (!user) {
       alert("로그인이 필요합니다.");
       return;
     }
-
     const onSettled = () => refetch();
+    isLiked
+      ? removeLike.mutate(undefined, { onSettled })
+      : addLike.mutate(undefined, { onSettled });
+  };
 
-    if (isLiked) {
-      removeLike.mutate(undefined, { onSettled });
-    } else {
-      addLike.mutate(undefined, { onSettled });
+  const handleDelete = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      deleteLP.mutate(undefined, {
+        onSuccess: () => {
+          alert("삭제가 완료되었습니다.");
+          navigate("/");
+        },
+        onError: () => {
+          alert("삭제에 실패했습니다. 다시 시도해주세요.");
+        },
+      });
     }
   };
 
   return (
     <div className="flex justify-center min-h-screen px-4 py-12 text-white bg-black">
       <div className="relative flex flex-col items-center w-full max-w-xl gap-6 p-8 shadow-2xl rounded-2xl bg-zinc-900">
-        
         {/* 작성자 */}
         <div className="absolute flex items-center gap-2 text-sm text-gray-300 top-6 left-6">
           <div className="w-6 h-6 bg-green-500 rounded-full" />
@@ -58,14 +71,10 @@ const LPDetail = () => {
           <span>{dayjs(lp.createdAt).fromNow()}</span>
           {isMine && (
             <>
-              <button
-                title="수정"
-                onClick={() => setIsEditOpen(true)}
-                className="text-base hover:text-white"
-              >
+              <button title="수정" onClick={() => setIsEditOpen(true)} className="text-base hover:text-white">
                 ✏️
               </button>
-              <button title="삭제" className="text-base hover:text-white">
+              <button title="삭제" onClick={handleDelete} disabled={deleteLP.isPending} className="text-base hover:text-white disabled:opacity-50">
                 🗑️
               </button>
             </>
@@ -95,10 +104,7 @@ const LPDetail = () => {
         {/* 태그 */}
         <div className="flex flex-wrap justify-center gap-2">
           {lp.tags.map((tag) => (
-            <span
-              key={tag.id}
-              className="px-3 py-1 text-xs text-white bg-gray-700 rounded-full"
-            >
+            <span key={tag.id} className="px-3 py-1 text-xs text-white bg-gray-700 rounded-full">
               #{tag.name}
             </span>
           ))}
@@ -119,13 +125,8 @@ const LPDetail = () => {
         {/* 댓글 */}
         <CommentList />
 
-        {/* LP 수정 모달 */}
-        {isEditOpen && (
-          <EditLPModal
-            lp={lp}
-            onClose={() => setIsEditOpen(false)}
-          />
-        )}
+        {/* 수정 모달 */}
+        {isEditOpen && <EditLPModal lp={lp} onClose={() => setIsEditOpen(false)} />}
       </div>
     </div>
   );
