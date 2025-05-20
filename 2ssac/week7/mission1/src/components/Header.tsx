@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { logoutAPI } from "../services/auth";
+import { useLogout } from "../hooks/auth/useLogout";
 
 type Props = {
   onToggleSidebar: () => void;
@@ -9,16 +9,19 @@ type Props = {
 const Header = ({ onToggleSidebar }: Props) => {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
+  const logoutMutation = useLogout();
 
   const handleLogout = async () => {
-    try {
-      await logoutAPI();
-      logout();
-      alert("로그아웃되었습니다.");
-      navigate("/");
-    } catch {
-      alert("로그아웃 실패");
-    }
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        logout(); // context에서 상태 초기화
+        alert("로그아웃되었습니다.");
+        navigate("/");
+      },
+      onError: () => {
+        alert("로그아웃 실패: 다시 시도해주세요.");
+      },
+    });
   };
 
   return (
@@ -33,8 +36,12 @@ const Header = ({ onToggleSidebar }: Props) => {
         {isAuthenticated ? (
           <>
             <span className="text-sm">{user?.name ?? "사용자"}님 반갑습니다.</span>
-            <button onClick={handleLogout} className="px-4 py-1 text-sm transition border rounded hover:bg-white hover:text-black">
-              로그아웃
+            <button
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+              className="px-4 py-1 text-sm transition border rounded hover:bg-white hover:text-black disabled:opacity-50"
+            >
+              {logoutMutation.isPending ? "로그아웃 중..." : "로그아웃"}
             </button>
           </>
         ) : (
