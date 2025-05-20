@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 export type Tag = {
   id: number;

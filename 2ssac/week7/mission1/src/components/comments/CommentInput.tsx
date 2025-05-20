@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useCreateComment } from "../../hooks/useCreateComment";
+import { useCreateComment } from "../../hooks/comments/useCreateComment";
 
 type Props = {
   order: "asc" | "desc";

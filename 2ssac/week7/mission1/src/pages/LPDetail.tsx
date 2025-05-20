@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useLPDetail } from "../hooks/useLPDetail";
+import { useLPDetail } from "../hooks/lps/useLPDetail";
 import CommentList from "../components/comments/CommentList";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";

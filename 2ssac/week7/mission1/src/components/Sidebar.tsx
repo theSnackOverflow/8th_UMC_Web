@@ -1,4 +1,5 @@
 import { cn } from "../utils/cn";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   isOpen: boolean;
@@ -6,6 +7,8 @@ type Props = {
 };
 
 const Sidebar = ({ isOpen, onClose }: Props) => {
+  const navigate = useNavigate();
+
   return (
     <aside
       className={cn(
@@ -16,11 +19,17 @@ const Sidebar = ({ isOpen, onClose }: Props) => {
     >
       {/* 상단 메뉴 */}
       <nav className="flex flex-col gap-6">
-        <div className="flex items-center gap-2 text-lg cursor-pointer hover:text-pink-400">
+        <div
+          className="flex items-center gap-2 text-lg cursor-pointer hover:text-pink-400"
+          onClick={() => navigate("/search")}
+        >
           <span>🔍</span>
           <span>찾기</span>
         </div>
-        <div className="flex items-center gap-2 text-lg cursor-pointer hover:text-pink-400">
+        <div
+          className="flex items-center gap-2 text-lg cursor-pointer hover:text-pink-400"
+          onClick={() => navigate("/mypage")}
+        >
           <span>👤</span>
           <span>마이페이지</span>
         </div>

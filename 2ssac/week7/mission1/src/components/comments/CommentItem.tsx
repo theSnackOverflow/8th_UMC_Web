@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
-import type { Comment } from "../../hooks/useInfiniteComments";
+import type { Comment } from "../../hooks/comments/useInfiniteComments";
 import { useParams } from "react-router-dom";
-import { useUpdateComment } from "../../hooks/useUpdateComment";
-import { useDeleteComment } from "../../hooks/useDeleteComment";
+import { useUpdateComment } from "../../hooks/comments/useUpdateComment";
+import { useDeleteComment } from "../../hooks/comments/useDeleteComment";
 import { MoreHorizontal } from "lucide-react";
 
 interface Props {

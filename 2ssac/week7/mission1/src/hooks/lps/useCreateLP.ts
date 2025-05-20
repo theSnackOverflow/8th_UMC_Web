@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import axiosInstance from "../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 type CreateLPRequest = {
   title: string;
   content: string;
-  thumbnail: string; // URL
+  thumbnail: string;
   tags: string[];
   published: boolean;
 };

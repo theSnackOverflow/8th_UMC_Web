@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useInfiniteComments } from "../../hooks/useInfiniteComments";
+import { useInfiniteComments } from "../../hooks/comments/useInfiniteComments";
 import CommentItem from "./CommentItem";
 import CommentInput from "./CommentInput";
 

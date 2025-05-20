@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { useInfiniteLPs } from "../hooks/useInfiniteLPs";
+import { useInfiniteLPs } from "../hooks/lps/useInfiniteLPs";
 import LPCard from "../components/LPCard";
 import SkeletonCard from "../components/SkeletonCard";
-import type { LP } from "../hooks/useInfiniteLPs";
+import type { LP } from "../hooks/lps/useInfiniteLPs";
 
 import AddLPButton from "../components/buttons/AddLPButton";
 import AddLPModal from "../components/modals/AddLPModal";

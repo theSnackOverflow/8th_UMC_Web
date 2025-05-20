@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { useCreateLP } from "../../hooks/useCreateLP";
-import { useUploadImage } from "../../hooks/useUploadImage";
+import { useCreateLP } from "../../hooks/lps/useCreateLP";
+import { useUploadImage } from "../../hooks/uploads/useUploadImage";
 
 export type AddLPModalProps = {
   onClose: () => void;

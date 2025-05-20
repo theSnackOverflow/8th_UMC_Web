@@ -7,6 +7,7 @@ import LPDetail from "./pages/LPDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
+import MyPage from "./pages/MyPage";
 
 const App = () => {
   return (
@@ -24,6 +25,9 @@ const App = () => {
           />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
+          
+          <Route path="/mypage" element={<MyPage />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

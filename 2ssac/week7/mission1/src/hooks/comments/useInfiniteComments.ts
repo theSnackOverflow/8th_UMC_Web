@@ -1,6 +1,6 @@
 // hooks/useInfiniteComments.ts
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axiosInstance from "../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 export type Comment = {
   id: number;

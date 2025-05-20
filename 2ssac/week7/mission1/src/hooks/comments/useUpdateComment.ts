@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 export const useUpdateComment = (lpId: number, commentId: number) => {
   const queryClient = useQueryClient();
