@@ -46,7 +46,7 @@ const CommentItem = ({ comment }: Props) => {
     }
   };
 
-  const isMyComment = me?.id === comment.author.id;
+  const isMyComment = me?.email === comment.author.email;
 
   return (
     <div className="relative px-4 py-3 text-sm rounded-lg bg-zinc-800">
