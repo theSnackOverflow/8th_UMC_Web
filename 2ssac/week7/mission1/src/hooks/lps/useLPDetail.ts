@@ -24,11 +24,11 @@ export type LPDetail = {
   content: string;
   thumbnail: string;
   published: boolean;
-  author: Author;
+  tags: { id: number; name: string }[];
+  author: { id: number; name: string };
+  likes: any[];
   createdAt: string;
   updatedAt: string;
-  tags: Tag[];
-  likes: Like[];
 };
 
 export const useLPDetail = (lpId: string) => {
@@ -40,7 +40,7 @@ export const useLPDetail = (lpId: string) => {
       if (!res.data?.data) throw new Error("LP data not found");
       return res.data.data;
     },
-    enabled: !!lpId, // lpId 없으면 쿼리 비활성화
-    retry: 1, // 실패 시 한 번만 재시도
+    enabled: !!lpId,
+    retry: 1,
   });
 };
