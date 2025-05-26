@@ -1,16 +1,16 @@
-import { useAppDispatch, useAppSelector } from "../hooks/useTypedRedux";
-import { closeModal } from "../features/modal/modalSlice";
-import { clearCart } from "../features/cart/cartSlice";
+import { useCartStore } from "../stores/useCartStore";
+import { useModalStore } from "../stores/useModalStore";
 
 const Modal = () => {
-  const isOpen = useAppSelector((state) => state.modal.isOpen);
-  const dispatch = useAppDispatch();
+  const isOpen = useModalStore((state) => state.isOpen);
+  const closeModal = useModalStore((state) => state.closeModal);
+  const clearCart = useCartStore((state) => state.clearCart);
 
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    dispatch(clearCart());
-    dispatch(closeModal());
+    clearCart();
+    closeModal();
   };
 
   return (
@@ -20,7 +20,7 @@ const Modal = () => {
         <div className="flex justify-center gap-4">
           <button
             className="px-4 py-2 text-sm text-gray-700 border rounded hover:bg-gray-100"
-            onClick={() => dispatch(closeModal())}
+            onClick={closeModal}
           >
             아니요
           </button>

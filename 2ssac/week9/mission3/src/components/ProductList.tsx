@@ -1,15 +1,14 @@
-import { useDispatch } from "react-redux";
-import cartItems from "../constants/cartItems";
-import { addItem, calculateTotal } from "../features/cart/cartSlice";
 import { useState } from "react";
+import cartItems from "../constants/cartItems";
+import { useCartStore } from "../stores/useCartStore";
 
 const ProductList = () => {
-  const dispatch = useDispatch();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const addItem = useCartStore((state) => state.addItem);
 
   const handleChangeQuantity = (id: string, delta: number) => {
     setQuantities((prev) => {
-      const newValue = Math.max((prev[id] ?? 0) + delta, 0); // 최소 0
+      const newValue = Math.max((prev[id] ?? 0) + delta, 0);
       return { ...prev, [id]: newValue };
     });
   };
@@ -17,10 +16,17 @@ const ProductList = () => {
   const handleAddToCart = (item: any) => {
     const quantity = quantities[item.id] ?? 0;
     if (quantity < 1) return;
+
     for (let i = 0; i < quantity; i++) {
-      dispatch(addItem(item));
+      addItem({
+        id: item.id,
+        title: item.title,
+        singer: item.singer,
+        price: Number(item.price),
+        image: item.img,
+      });
     }
-    dispatch(calculateTotal());
+
     setQuantities((prev) => ({ ...prev, [item.id]: 0 }));
   };
 
@@ -51,8 +57,7 @@ const ProductList = () => {
             </div>
 
             <div className="flex items-center gap-4">
-
-              {/* 수량 조절 버튼 */}
+              {/* 수량 조절 */}
               <div className="flex items-center gap-2">
                 <button
                   className="px-2 py-1 text-sm font-bold bg-gray-200 rounded"

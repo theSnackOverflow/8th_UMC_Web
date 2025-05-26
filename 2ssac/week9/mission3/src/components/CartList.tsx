@@ -1,19 +1,11 @@
-import { useAppSelector, useAppDispatch } from "../hooks/useTypedRedux";
-// import { clearCart } from "../features/cart/cartSlice";
 import CartItem from "./CartItem";
-import { openModal } from "../features/modal/modalSlice";
 import Modal from "./Modal";
+import { useModalStore } from "../stores/useModalStore";
+import { useCartStore } from "../stores/useCartStore";
 
 const CartList = () => {
-  const dispatch = useAppDispatch();
-  const cartItems = useAppSelector((state) => state.cart.cartItems);
-
-  // const handleClear = () => {
-  //   if (confirm("장바구니를 비우시겠어요?")) {
-  //     dispatch(clearCart());
-  //   }
-  // };
-
+  const openModal = useModalStore((state) => state.openModal);
+  const cartItems = useCartStore((state) => state.cartItems);
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.amount,
     0
@@ -35,12 +27,13 @@ const CartList = () => {
 
           <div className="flex justify-center mt-6">
             <button
-              onClick={() => dispatch(openModal())}
+              onClick={openModal}
               className="px-6 py-2 text-sm transition border border-gray-700 rounded hover:bg-gray-800 hover:text-white"
             >
               전체 삭제
             </button>
           </div>
+
           <Modal />
         </>
       )}

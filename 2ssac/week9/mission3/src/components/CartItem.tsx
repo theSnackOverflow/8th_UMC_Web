@@ -1,23 +1,22 @@
-import { useAppDispatch } from "../hooks/useTypedRedux";
-import { increase, decrease, removeItem } from "../features/cart/cartSlice";
-import type { LP } from "../features/cart/cartType";
+import { useCartStore } from "../stores/useCartStore";
+import type { LP } from "../types/lp";
+// import { shallow } from "zustand/shallow";
 
 type Props = {
   lp: LP;
 };
 
 const CartItem = ({ lp }: Props) => {
-  const dispatch = useAppDispatch();
+  const increase = useCartStore((state) => state.increase);
+  const decrease = useCartStore((state) => state.decrease);
+  const removeItem = useCartStore((state) => state.removeItem);
 
-  const handleIncrease = () => {
-    dispatch(increase(lp.id));
-  };
-
+  const handleIncrease = () => increase(lp.id);
   const handleDecrease = () => {
     if (lp.amount === 1) {
-      dispatch(removeItem(lp.id));
+      removeItem(lp.id);
     } else {
-      dispatch(decrease(lp.id));
+      decrease(lp.id);
     }
   };
 

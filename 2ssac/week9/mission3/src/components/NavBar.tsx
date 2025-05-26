@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../hooks/useTypedRedux";
+import { useCartStore } from "../stores/useCartStore";
 
 const Navbar = () => {
-  const amount = useAppSelector((state) => state.cart.amount);
+  const amount = useCartStore((state) => state.amount);
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 text-white bg-gray-800 shadow">
