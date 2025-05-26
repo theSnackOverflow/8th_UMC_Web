@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
     <nav className="flex items-center justify-between px-6 py-4 text-white bg-gray-800 shadow">
       <Link to="/" className="text-2xl font-bold">
-        Ohtani Ahn
+        2ssac
       </Link>
       <Link to="/cart" className="flex items-center gap-2">
         <span className="text-xl">🛒</span>
