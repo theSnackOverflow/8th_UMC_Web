@@ -1,5 +1,6 @@
 import type { Movie } from "../types/movie";
 
+// 공통
 const BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -17,12 +18,14 @@ const fetchFromTMDB = async (endpoint: string) => {
   return res.json();
 };
 
-export const fetchPopularMovies = async (
-  page: number = 1
+// 정렬 후
+export const fetchMoviesBySort = async (
+  page: number = 1,
+  sortBy: string = "popularity.desc",
+  language: string = "ko-KR"
 ): Promise<Movie[]> => {
-  const data = await fetchFromTMDB(
-    `/movie/popular?language=ko-KR&page=${page}`
-  );
+  const endpoint = `/discover/movie?sort_by=${sortBy}&language=${language}&page=${page}`;
+  const data = await fetchFromTMDB(endpoint);
   return data.results;
 };
 
@@ -31,7 +34,7 @@ export const fetchMovieDetail = async (id: string): Promise<Movie> => {
   return await fetchFromTMDB(`/movie/${id}?language=ko-KR`);
 };
 
-// 영화 검색
+// 검색
 export const searchMovies = async (
   query: string,
   includeAdult: boolean = false,
