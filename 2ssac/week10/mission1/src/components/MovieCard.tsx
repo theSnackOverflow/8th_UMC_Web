@@ -1,8 +1,9 @@
-import type { Movie } from "../types/movie";
+import { memo } from 'react';
+import type { Movie } from '../types/movie';
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-export default function MovieCard({ movie }: { movie: Movie }) {
+const MovieCard = ({ movie }: { movie: Movie }) => {
   return (
     <div className="overflow-hidden transition-all bg-white rounded-2xl shadow hover:scale-[1.03] hover:shadow-lg">
       <img
@@ -20,4 +21,6 @@ export default function MovieCard({ movie }: { movie: Movie }) {
       </div>
     </div>
   );
-}
+};
+
+export default memo(MovieCard);

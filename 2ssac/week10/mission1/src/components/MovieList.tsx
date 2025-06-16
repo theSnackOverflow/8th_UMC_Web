@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { fetchMoviesBySort, searchMovies } from '../api/tmdb';
 import type { Movie } from '../types/movie';
@@ -14,7 +14,6 @@ const MovieList = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-
   const [query, setQuery] = useState('');
   const [includeAdult, setIncludeAdult] = useState(false);
   const [language, setLanguage] = useState('ko-KR');
@@ -43,11 +42,11 @@ const MovieList = () => {
     [query, includeAdult, language, sortBy, page]
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setHasMore(true);
     await fetchMovies(true, 1);
-  };
+  }, [fetchMovies]);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -58,7 +57,6 @@ const MovieList = () => {
 
   useEffect(() => {
     if (query.trim()) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && hasMore && !loading) {
@@ -67,7 +65,6 @@ const MovieList = () => {
       },
       { threshold: 1.0 }
     );
-
     const el = observerRef.current;
     if (el) observer.observe(el);
     return () => el && observer.unobserve(el);
@@ -78,6 +75,29 @@ const MovieList = () => {
       fetchMovies(false, page);
     }
   }, [page]);
+
+  const handleCardClick = useCallback((id: number) => {
+    setSelectedMovieId(id);
+  }, []);
+
+  const renderedCards = useMemo(() => (
+    movies.map((movie) => (
+      <div
+        key={movie.id}
+        onClick={() => handleCardClick(movie.id)}
+        className="cursor-pointer"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleCardClick(movie.id);
+          }
+        }}
+      >
+        <MovieCard movie={movie} />
+      </div>
+    ))
+  ), [movies, handleCardClick]);
 
   return (
     <>
@@ -118,22 +138,7 @@ const MovieList = () => {
       </form>
 
       <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {movies.map((movie) => (
-          <div
-            key={movie.id}
-            onClick={() => setSelectedMovieId(movie.id)}
-            className="cursor-pointer"
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setSelectedMovieId(movie.id);
-              }
-            }}
-          >
-            <MovieCard movie={movie} />
-          </div>
-        ))}
+        {renderedCards}
       </div>
 
       <div ref={observerRef} className="h-16 mt-10" />
