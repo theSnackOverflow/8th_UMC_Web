@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { fetchPopularMovies, searchMovies } from '../api/tmdb';
 import type { Movie } from '../types/movie';
 import MovieCard from './MovieCard';
@@ -9,7 +9,6 @@ const MovieList = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-
   const [query, setQuery] = useState('');
   const [includeAdult, setIncludeAdult] = useState(false);
   const [language, setLanguage] = useState('ko-KR');
@@ -17,29 +16,30 @@ const MovieList = () => {
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  // 검ㄴ색 or 인기 영화 요청
-  const fetchMovies = async (reset = false) => {
+  const fetchMovies = useCallback(async (reset = false) => {
     try {
       setLoading(true);
       const data = query.trim()
         ? await searchMovies(query, includeAdult, language)
         : await fetchPopularMovies(page);
+
       if (reset) {
         setMovies(data);
       } else {
         setMovies((prev) => [...prev, ...data]);
       }
+
       if (data.length === 0) setHasMore(false);
     } catch (err) {
       console.error('영화 목록을 불러오지 못했습니다:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [query, includeAdult, language, page]);
 
   useEffect(() => {
     if (!query.trim()) fetchMovies();
-  }, [page]);
+  }, [fetchMovies]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +57,7 @@ const MovieList = () => {
       },
       { threshold: 1.0 }
     );
+
     const el = observerRef.current;
     if (el) observer.observe(el);
     return () => el && observer.unobserve(el);
