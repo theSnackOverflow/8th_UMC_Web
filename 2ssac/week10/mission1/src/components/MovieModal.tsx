@@ -38,7 +38,7 @@ const MovieModal = ({ movieId, onClose }: Props) => {
       try {
         const data = await fetchMovieDetail(String(movieId));
         setMovie(data);
-      } catch (err) {
+      } catch {
         setError('영화 정보를 불러오지 못했습니다.');
       } finally {
         setLoading(false);
@@ -51,60 +51,73 @@ const MovieModal = ({ movieId, onClose }: Props) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black bg-opacity-60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center px-2 bg-black bg-opacity-60 backdrop-blur-sm sm:px-6"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 rounded-3xl bg-gradient-to-br from-white via-gray-100 to-gray-50 shadow-2xl transition-all transform scale-100"
+        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 상단 이미지 오버레이 */}
+        {movie?.poster_path && (
+          <div className="relative h-64 bg-black">
+            <img
+              src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+              alt={movie.title}
+              className="absolute inset-0 object-cover w-full h-full opacity-60"
+            />
+            <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
+              <h2 className="text-xl font-bold text-white sm:text-2xl">{movie.title}</h2>
+              <p className="mt-1 text-sm italic text-gray-300">{movie.original_title}</p>
+            </div>
+          </div>
+        )}
+
+        {/* 닫기 버튼 */}
         <button
           onClick={onClose}
-          className="absolute text-2xl text-gray-500 transition top-4 right-4 hover:text-black"
-          aria-label="닫기"
+          className="absolute z-10 text-2xl text-white top-4 right-4 hover:text-gray-300"
         >
           ✕
         </button>
 
-        {error || !movie ? (
-          <p className="font-semibold text-red-500">영화 정보를 불러올 수 없습니다.</p>
-        ) : (
-          <div className="flex flex-col gap-6 md:flex-row">
-            <img
-              src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-              alt={movie.title}
-              className="object-cover w-full shadow-lg md:w-1/3 rounded-xl"
-            />
-            <div className="flex flex-col justify-between flex-1">
-              <div>
-                <h2 className="mb-1 text-3xl font-bold tracking-tight text-slate-900">
-                  {movie.title}
-                </h2>
-                <p className="mb-4 text-sm italic text-slate-500">{movie.original_title}</p>
-
-                <div className="space-y-2 text-sm text-slate-700">
+        {/* 콘텐츠 본문 */}
+        <div className="flex flex-col gap-6 px-4 py-6 bg-white sm:px-6 md:flex-row">
+          {error || !movie ? (
+            <p className="font-semibold text-red-600">{error || '영화 정보를 불러올 수 없습니다.'}</p>
+          ) : (
+            <>
+              <img
+                src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                alt={movie.title}
+                className="object-contain w-full max-w-xs mx-auto shadow md:mx-0 md:w-1/3 max-h-80 rounded-xl"
+              />
+              <div className="flex flex-col justify-between flex-1">
+                <div className="space-y-2 text-sm text-gray-700">
                   <p>
-                    <span className="font-medium text-yellow-600">⭐ 평점:</span> {movie.vote_average} / 10 ({movie.vote_count}명)
+                    <span className="font-semibold text-yellow-600">⭐ 평점:</span>{' '}
+                    {movie.vote_average} / 10 ({movie.vote_count}명)
                   </p>
                   <p>
-                    <span className="font-medium text-blue-600">🎬 개봉일:</span> {movie.release_date}
+                    <span className="font-semibold text-blue-600">🎬 개봉일:</span>{' '}
+                    {movie.release_date}
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-gray-700 whitespace-pre-line">
+                    {movie.overview}
                   </p>
                 </div>
-
-                <p className="mt-4 text-sm leading-relaxed text-gray-700">{movie.overview}</p>
+                <a
+                  href={`https://www.imdb.com/title/${movie.imdb_id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-6 text-sm font-medium text-blue-600 underline hover:text-blue-800"
+                >
+                  IMDb에서 더 보기 →
+                </a>
               </div>
-
-              <a
-                href={`https://www.imdb.com/title/${movie.imdb_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-6 text-sm font-medium text-blue-600 underline hover:text-blue-800"
-              >
-                IMDb에서 더 보기 →
-              </a>
-            </div>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>,
     document.body
