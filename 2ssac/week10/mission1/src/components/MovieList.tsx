@@ -2,49 +2,43 @@ import { useEffect, useState } from 'react';
 import { fetchPopularMovies, searchMovies } from '../api/tmdb';
 import type { Movie } from '../types/movie';
 import MovieCard from './MovieCard';
-import { Link } from 'react-router-dom';
-
+import MovieModal from './MovieModal';
 
 const MovieList = () => {
-
   const [movies, setMovies] = useState<Movie[]>([]);
   const [query, setQuery] = useState('');
   const [includeAdult, setIncludeAdult] = useState(false);
   const [language, setLanguage] = useState('ko-KR');
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
 
-  const handleSearch = async () => {
+  // 🔍 검색 또는 인기영화 불러오기
+  const fetchMovies = async () => {
     try {
-      if (query.trim()) {
-        const results = await searchMovies(query, includeAdult, language);
-        setMovies(results);
-      } else {
-        const results = await fetchPopularMovies();
-        setMovies(results);
-      }
+      const results = query.trim()
+        ? await searchMovies(query, includeAdult, language)
+        : await fetchPopularMovies();
+      setMovies(results);
     } catch (error) {
-      console.error(error);
+      console.error('영화 목록을 불러오지 못했습니다:', error);
     }
   };
 
+  // ✅ 최초 mount 시 인기 영화 로드
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchPopularMovies();
-        setMovies(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
+    fetchMovies();
   }, []);
 
-return (
+  // 🔄 검색 제출 시
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchMovies();
+  };
+
+  return (
     <>
+      {/* 검색 폼 */}
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSearch();
-        }}
+        onSubmit={handleSubmit}
         className="flex flex-wrap items-center gap-2 p-4 mb-4 bg-white rounded shadow"
       >
         <input
@@ -54,7 +48,7 @@ return (
           placeholder="영화 제목 입력"
           className="flex-1 min-w-[180px] px-3 py-2 border rounded"
         />
-        <label className="flex items-center gap-1">
+        <label className="flex items-center gap-1 text-sm">
           <input
             type="checkbox"
             checked={includeAdult}
@@ -79,13 +73,33 @@ return (
         </button>
       </form>
 
+      {/* 영화 카드 리스트 */}
       <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {movies.map((movie) => (
-          <Link to={`/detail/${movie.id}`} key={movie.id}>
+          <div
+            key={movie.id}
+            onClick={() => setSelectedMovieId(movie.id)}
+            className="cursor-pointer"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                setSelectedMovieId(movie.id);
+              }
+            }}
+          >
             <MovieCard movie={movie} />
-          </Link>
+          </div>
         ))}
       </div>
+
+      {/* 모달 */}
+      {selectedMovieId !== null && (
+        <MovieModal
+          movieId={selectedMovieId}
+          onClose={() => setSelectedMovieId(null)}
+        />
+      )}
     </>
   );
 };
