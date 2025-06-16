@@ -1,30 +1,42 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 
+const sortOptions = [
+  { value: 'popularity.desc', label: '인기순' },
+  { value: 'vote_average.desc', label: '평점순' },
+  { value: 'release_date.desc', label: '최신순' },
+];
+
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const currentSortBy = params.get('sort_by') ?? 'popularity.desc';
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const sortBy = e.target.value;
-    const params = new URLSearchParams(location.search);
-    params.set('sort_by', sortBy);
+    params.set('sort_by', e.target.value);
     navigate({ pathname: '/', search: params.toString() });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <header className="flex items-center justify-between px-6 py-4 bg-white shadow-md">
-        <Link to="/" className="text-2xl font-bold transition text-black-600 hover:text-black-700">
+        <Link
+          to="/"
+          className="text-2xl font-bold text-black transition hover:text-blue-600"
+        >
           2ssac
         </Link>
         <select
+          value={currentSortBy}
           onChange={handleSortChange}
-          defaultValue="popularity.desc"
           className="px-3 py-2 text-sm border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          <option value="popularity.desc">인기순</option>
-          <option value="vote_average.desc">평점순</option>
-          <option value="release_date.desc">최신순</option>
+          {sortOptions.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
       </header>
 
@@ -39,4 +51,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default Layout; 

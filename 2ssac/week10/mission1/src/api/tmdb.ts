@@ -18,13 +18,19 @@ const fetchFromTMDB = async (endpoint: string) => {
   return res.json();
 };
 
-// 정렬 후
+// 정렬 후 (최신순일 경우 미개봉 제외 처리 포함)
 export const fetchMoviesBySort = async (
   page: number = 1,
   sortBy: string = "popularity.desc",
   language: string = "ko-KR"
 ): Promise<Movie[]> => {
-  const endpoint = `/discover/movie?sort_by=${sortBy}&language=${language}&page=${page}`;
+  const today = new Date().toISOString().split("T")[0];
+
+  // 최신순일 경우에만 release_date.lte 파라미터 추가
+  const endpoint = `/discover/movie?sort_by=${sortBy}&language=${language}&page=${page}${
+    sortBy === "release_date.desc" ? `&release_date.lte=${today}` : ""
+  }`;
+
   const data = await fetchFromTMDB(endpoint);
   return data.results;
 };
