@@ -1,62 +1,44 @@
 import type { Movie } from "../types/movie";
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
 const BASE_URL = "https://api.themoviedb.org/3";
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
+const HEADERS = {
+  Authorization: `Bearer ${API_KEY}`,
+  Accept: "application/json",
+};
 
-export const fetchPopularMovies = async (): Promise<Movie[]> => {
-  const res = await fetch(`${BASE_URL}/movie/popular?language=ko-KR&page=1`, {
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-      Accept: "application/json",
-    },
-  });
-
+const fetchFromTMDB = async (endpoint: string) => {
+  const res = await fetch(`${BASE_URL}${endpoint}`, { headers: HEADERS });
   if (!res.ok) {
-    throw new Error("인기 영화를 불러오지 못했습니다.");
+    const errorText = await res.text();
+    throw new Error(`TMDB 요청 실패: ${res.status} - ${errorText}`);
   }
+  return res.json();
+};
 
-  const data = await res.json();
+export const fetchPopularMovies = async (
+  page: number = 1
+): Promise<Movie[]> => {
+  const data = await fetchFromTMDB(
+    `/movie/popular?language=ko-KR&page=${page}`
+  );
   return data.results;
 };
 
-// 영화 상세 정보
+// 상세 정보
 export const fetchMovieDetail = async (id: string): Promise<Movie> => {
-  const res = await fetch(`${BASE_URL}/movie/${id}?language=ko-KR`, {
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-      Accept: "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error("영화 정보를 불러오지 못했습니다.");
-  }
-
-  return await res.json();
+  return await fetchFromTMDB(`/movie/${id}?language=ko-KR`);
 };
 
-// 영화 검색 기능
+// 영화 검색
 export const searchMovies = async (
   query: string,
-  includeAdult = false,
-  language = "ko-KR"
+  includeAdult: boolean = false,
+  language: string = "ko-KR"
 ): Promise<Movie[]> => {
-  const res = await fetch(
-    `${BASE_URL}/search/movie?query=${encodeURIComponent(
-      query
-    )}&include_adult=${includeAdult}&language=${language}`,
-    {
-      headers: {
-        Authorization: `Bearer ${API_KEY}`,
-        Accept: "application/json",
-      },
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error("영화 검색에 실패했습니다.");
-  }
-
-  const data = await res.json();
+  const encoded = encodeURIComponent(query);
+  const endpoint = `/search/movie?query=${encoded}&include_adult=${includeAdult}&language=${language}`;
+  const data = await fetchFromTMDB(endpoint);
   return data.results;
 };

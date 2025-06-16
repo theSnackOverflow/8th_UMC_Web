@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchPopularMovies, searchMovies } from '../api/tmdb';
 import type { Movie } from '../types/movie';
 import MovieCard from './MovieCard';
@@ -6,37 +6,64 @@ import MovieModal from './MovieModal';
 
 const MovieList = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const [query, setQuery] = useState('');
   const [includeAdult, setIncludeAdult] = useState(false);
   const [language, setLanguage] = useState('ko-KR');
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
 
-  // 🔍 검색 또는 인기영화 불러오기
-  const fetchMovies = async () => {
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  // 검ㄴ색 or 인기 영화 요청
+  const fetchMovies = async (reset = false) => {
     try {
-      const results = query.trim()
+      setLoading(true);
+      const data = query.trim()
         ? await searchMovies(query, includeAdult, language)
-        : await fetchPopularMovies();
-      setMovies(results);
-    } catch (error) {
-      console.error('영화 목록을 불러오지 못했습니다:', error);
+        : await fetchPopularMovies(page);
+      if (reset) {
+        setMovies(data);
+      } else {
+        setMovies((prev) => [...prev, ...data]);
+      }
+      if (data.length === 0) setHasMore(false);
+    } catch (err) {
+      console.error('영화 목록을 불러오지 못했습니다:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ✅ 최초 mount 시 인기 영화 로드
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    if (!query.trim()) fetchMovies();
+  }, [page]);
 
-  // 🔄 검색 제출 시
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    fetchMovies();
+    setPage(1);
+    setHasMore(true);
+    await fetchMovies(true);
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore && !loading) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+    const el = observerRef.current;
+    if (el) observer.observe(el);
+    return () => el && observer.unobserve(el);
+  }, [hasMore, loading]);
 
   return (
     <>
-      {/* 검색 폼 */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-wrap items-center gap-2 p-4 mb-4 bg-white rounded shadow"
@@ -69,11 +96,10 @@ const MovieList = () => {
           type="submit"
           className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
         >
-          🔍 검색하기
+          검색하기
         </button>
       </form>
 
-      {/* 영화 카드 리스트 */}
       <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {movies.map((movie) => (
           <div
@@ -93,7 +119,14 @@ const MovieList = () => {
         ))}
       </div>
 
-      {/* 모달 */}
+      <div ref={observerRef} className="h-16 mt-10" />
+
+      {loading && (
+        <div className="py-4 text-center text-gray-500 animate-pulse">
+          불러오는 중...
+        </div>
+      )}
+
       {selectedMovieId !== null && (
         <MovieModal
           movieId={selectedMovieId}
