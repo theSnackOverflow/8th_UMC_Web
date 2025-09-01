@@ -1,4 +1,5 @@
-# 🐾 UMC 8th Web 워크북 실습 (2025.03 ~ 2025.06)
+# 🐾 UMC 8th Web 워크북 실습 
+## 기간 : 2025.03 ~ 2025.06
 
 <p align="center">
   <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white"/></a>
@@ -44,13 +45,6 @@ React, TypeScript, Tailwind CSS를 기반으로 단계별 과제를 수행하며
 
 ---
 
-## 📷 실행 화면
-<p align="center">
-  <img src="./assets/demo.gif" alt="실행 데모" width="600"/>
-</p>
-
----
-
 ## 📖 학습 목표
 1. React 컴포넌트와 상태 관리 기초 학습  
 2. Router와 API 연동을 통한 SPA 구조 이해  
@@ -64,8 +58,3 @@ React, TypeScript, Tailwind CSS를 기반으로 단계별 과제를 수행하며
 ⚡ **도전 과제**: 상태 관리와 비동기 처리의 타이밍 이슈 → TanStack Query + Zustand로 해결  
 🏆 **성과**: 팀 프로젝트와 개인 과제를 병행하며 **실무형 풀스택 역량**을 크게 성장  
 
----
-
-## 📅 기간
-- **2025.03 ~ 2025.06**
-- UMC 8th Web Workbook 실습
