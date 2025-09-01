@@ -1,10 +1,6 @@
 # 🐾 UMC 8th Web 워크북 실습 (2025.03 ~ 2025.06)
 
 <p align="center">
-  <img src="./assets/banner.png" alt="UMC Web Banner" width="700"/>
-</p>
-
-<p align="center">
   <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white"/></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white"/></a>
   <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/TailwindCSS-38B2AC?logo=tailwind-css&logoColor=white"/></a>
