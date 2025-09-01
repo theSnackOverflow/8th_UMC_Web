@@ -6,18 +6,6 @@ React, TypeScript, Tailwind CSS 등을 활용하여 단계별 과제를 수행�
 
 ---
 
-## 디렉토리 구조
-```
-.
-├── mission1/   # 1주차~3주차 실습: 기본 React 컴포넌트, 상태 관리
-├── mission2/   # 4주차~6주차 실습: Router, 비동기 통신, API 연동
-├── mission3/   # 7주차~9주차 실습: TanStack Query, Infinite Scroll
-├── mission4/   # 10주차~12주차 실습: 성능 최적화(useMemo, useCallback 등)
-└── README.md
-```
-
----
-
 ## 사용 기술 스택
 - **Frontend**: React, TypeScript  
 - **스타일링**: Tailwind CSS  
